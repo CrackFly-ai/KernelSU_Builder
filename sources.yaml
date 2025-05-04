@@ -1,20 +1,34 @@
 Sage-Android-14-samsung:
+  # Definir la fuente del kernel (repositorio y rama)
   kernel:
     - git clone https://github.com/CrackFly-ai/kernel_samsung_opensource -b common
     - cd kernel_samsung_opensource/kernel_platform/common
+
+  # Definir la fuente de Clang (repositorio y rama)
   clang:
     - git clone --depth=1 https://gitlab.com/Jprimero15/lolz_clang.git -b main
+
+  # Configuración del kernel
   config:
     - make O=out ARCH=arm64 gki_defconfig
+
+  # Comando de compilación del kernel usando Clang
   build:
     - ARCH=arm64 CROSS_COMPILE="${PWD}/clang/bin/aarch64-linux-gnu-" CROSS_COMPILE_COMPAT="${PWD}/clang/bin/arm-linux-gnueabi" CROSS_COMPILE_ARM32="${PWD}/clang/bin/arm-linux-gnueabi-" CLANG_TRIPLE=aarch64-linux-gnu- make -j$(nproc --all) LLVM=1 LLVM_IAS=1 LD=ld.lld AR=llvm-ar NM=llvm-nm AS=llvm-as OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip O=out
+
+  # Especificación del archivo de salida (imagen del kernel compilado)
   target:
     - out/arch/arm64/boot/Image.gz-dtb
+
+  # Fuente de AnyKernel3 (repositorio y rama)
   anykernel:
     - git clone https://github.com/HowWof/AnyKernel3.git -b master
+
+  # Fuente de KernelSU para habilitar el soporte de root
   kernelSU:
     - curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s kernelsu-version
-    
+
+# Limpiar las salidas previas y archivos innecesarios
 Clean:
   out:
     - rm -rf out
